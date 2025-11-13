@@ -1,7 +1,7 @@
 <template>
   <div v-if="visible" class="context-menu context-menu-content" :style="{ top: `${y}px`, left: `${x}px` }" @click.stop>
     <ul>
-      <li @click="emit('search', shortcut)"><span class="font-icon"></span>&nbsp;&nbsp; 搜索</li>
+      <li @click="emit('close', shortcut)"><span class="font-icon"></span>&nbsp;&nbsp; 搜索</li>
       <hr>
       <li @click="emit('edit', shortcut)"><span class="font-icon"></span>&nbsp;&nbsp; 编辑</li>
       <li @click="emit('delete', shortcut)"><span class="font-icon"></span>&nbsp;&nbsp; 删除</li>
