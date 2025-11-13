@@ -1,8 +1,10 @@
 <template>
   <div v-if="visible" class="context-menu context-menu-content" :style="{ top: `${y}px`, left: `${x}px` }" @click.stop>
     <ul>
-      <li @click="emit('edit', shortcut)"><span class="font-icon"></span>&nbsp;&nbsp; Edit</li>
-      <li @click="emit('delete', shortcut)"><span class="font-icon"></span>&nbsp;&nbsp; Delete</li>
+      <li @click="emit('search', shortcut)"><span class="font-icon"></span>&nbsp;&nbsp; 搜索</li>
+      <hr>
+      <li @click="emit('edit', shortcut)"><span class="font-icon"></span>&nbsp;&nbsp; 编辑</li>
+      <li @click="emit('delete', shortcut)"><span class="font-icon"></span>&nbsp;&nbsp; 删除</li>
     </ul>
   </div>
 </template>
@@ -26,8 +28,9 @@ const emit = defineEmits(['close', 'edit', 'delete'])
 .context-menu {
   position: fixed;
   background-color: var(--context-menu-bg-color);
-  border-radius: 10px;
-  border: 0.5px solid var(--search-border-color, #d2d3d6); // 设计稿边框
+  border-radius: 20px;
+  corner-shape: superellipse(1.5);
+  border: 0.5px solid var(--search-border-color); // 设计稿边框
   box-shadow: $contextMenu-shadow;
   padding: 0;
   z-index: 1000;
@@ -40,13 +43,22 @@ const emit = defineEmits(['close', 'edit', 'delete'])
     margin: 0;
   }
 
+  hr {
+    margin: 4px 0;
+    border: 0;
+    background-color: var(--search-border-color);
+    height: 0.5px;
+  }
+
   li {
-    border-radius: 8px;
+    border-radius: 15px;
+    corner-shape: superellipse(1.5);
     margin: 2px 4px;
     padding: 8px 16px;
     font-size: 14px;
     font-weight: 600;
     color: var(--text-primary-color);
+    transition: all 0.08s ease;
 
     &:hover {
       background-color: var(--context-menu-hover-bg-color);
@@ -54,6 +66,8 @@ const emit = defineEmits(['close', 'edit', 'delete'])
 
     &:active {
       background-color: var(--context-menu-hover-bg-color);
+      margin: 2px 2px;
+      transform: scale(0.94);
     }
 
     &::before {

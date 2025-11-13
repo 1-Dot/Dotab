@@ -5,6 +5,7 @@ interface UiState {
   isAddShortcutModalOpen: boolean
   isSettingsModalOpen: boolean
   editingShortcut: Shortcut | null // 用于编辑模式
+  activeShortcutId: string | null // 新增：用于追踪活动的快捷方式
 }
 
 export const useUiStore = defineStore('ui', {
@@ -12,6 +13,7 @@ export const useUiStore = defineStore('ui', {
     isAddShortcutModalOpen: false,
     isSettingsModalOpen: false,
     editingShortcut: null,
+    activeShortcutId: null, // 初始化
   }),
   actions: {
     openAddShortcutModal() {
@@ -31,6 +33,9 @@ export const useUiStore = defineStore('ui', {
     },
     closeSettingsModal() {
       this.isSettingsModalOpen = false
+    },
+    setActiveShortcut(shortcutId: string | null) { // 新增 action
+      this.activeShortcutId = shortcutId
     },
   },
 })

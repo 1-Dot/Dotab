@@ -21,11 +21,13 @@
 }
 
 @mixin input-style {
+  height: 42px;
   border: 1px solid var(--input-border-color);
   background-color: var(--input-bg-color);
   color: var(--text-primary-color);
   // ✨ 现在 $border-radius-medium 就可以被正确找到了！
-  border-radius: $border-radius-medium;
+  border-radius: 18px;
+  corner-shape: superellipse(1.5);
   padding: 10px 12px;
   font-size: 14px;
   width: 100%;
@@ -33,11 +35,7 @@
 
   &:focus {
     border-color: var(--accent-color);
+    border-width: 2px;
     outline: none;
-    // ✨ 确保这一行是有效的 SCSS 代码，如果不需要这个样式，可以整行注释掉或删除
-    // 如果确实想注释掉它，请用 // 开头注释整行：
-    // // box-shadow: 0 0 0 2px rgba(var(--accent-color-rgb), 0.2);
-    // 如果需要这个样式，它应该是这样的（没有 // 开头）:
-    box-shadow: 0 0 0 2px rgba(var(--accent-color-rgb), 0.2);
   }
 }

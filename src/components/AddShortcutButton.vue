@@ -57,7 +57,8 @@ defineEmits(['click'])
   box-shadow:
     0px 1px 4px 0px rgba(0, 0, 0, 0.12),
     0px 4px 16px 0px rgba(39, 49, 74, 0.1);
-  border-radius: 20px; // 设计稿圆角
+  border-radius: 25px; // 设计稿圆角
+  corner-shape: superellipse(1.5);
   border: 0.5px var(--search-border-color) solid; // 使用 CSS 变量
   transition:
     transform 0.15s ease-out,

@@ -1,6 +1,6 @@
 <template>
   <div class="user-greeting">
-    <img src="/images/avatar.png" alt="User Avatar" class="avatar-img" />
+    <img src="/images/avatar2.png" alt="User Avatar" class="avatar-img" />
     <h1>Hello, 1Dot</h1>
   </div>
 </template>
@@ -23,7 +23,8 @@
     // 修改为 img 标签
     width: 62px; // 设计稿尺寸
     height: 62px; // 设计稿尺寸
-    // border-radius: $border-radius-round;
+    border-radius: 25px;
+    corner-shape: superellipse(1.5);
   }
 
   h1 {

@@ -49,12 +49,12 @@ onUnmounted(() => window.removeEventListener('keydown', handleKeydown))
 }
 
 .modal-content {
-  background-color: var(--modal-bg-color);
-  padding: 24px;
-  border-radius: 20px;
-  box-shadow: $modalDialog-shadow;
+  background-color: var(--modal-action-bg-color);
+  border-radius: 40px;
+  corner-shape: superellipse(1.5);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1), 0 16px 36px rgb(0, 0, 0, 0.12);
   width: 100%;
-  max-width: $modal-max-width;
+  max-width: 435px;
   max-height: 90vh;
   overflow-y: auto;
 }
@@ -87,11 +87,11 @@ onUnmounted(() => window.removeEventListener('keydown', handleKeydown))
 
 .modal-fade-enter-from .modal-content {
   opacity: 0;
-  transform: scale(0.75);
+  transform: scale(1.2);
 }
 
 .modal-fade-leave-to .modal-content {
   opacity: 0.5;
-  transform: scale(0.9);
+  transform: scale(1.1);
 }
 </style>

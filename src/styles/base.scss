@@ -1,4 +1,3 @@
-@use 'sass:color';
 @use 'variables' as *;
 @use 'mixins' as *;
 
@@ -12,42 +11,10 @@
 
 // 定义 CSS 变量
 :root {
-  --bg-color: #f9fafb; // 更新为设计稿背景色
-  --text-primary-color: #333333; // 更新为设计稿主要文字颜色
-  --text-secondary-color: #{$light-text-secondary};
-  --search-bg-color: white; // 设计稿搜索框背景
-  --search-placeholder-color: #888888; // 设计稿搜索框占位符颜色
-  --search-border-color: #d2d3d6; // 设计稿搜索框边框颜色
+  @include declare-theme-variables(light);
 
-  // ✨ Updated shortcut CSS variables
-  --shortcut-icon-bg-color: white; // 设计稿快捷方式图标背景
-  --shortcut-item-bg-color: transparent; // 快捷方式项本身透明
-  --shortcut-item-hover-bg-color: transparent; // hover 时也不改变背景
-  --shortcut-name-text-color: black; // 快捷方式名称颜色（浅色模式）
-
-  --modal-backdrop-color: #{$light-modal-backdrop};
-  --modal-bg-color: #{$light-modal-bg};
-  --context-menu-bg-color: #{$light-context-menu-bg};
-  --context-menu-hover-bg-color: #{$light-context-menu-hover-bg};
-  --button-primary-bg-color: #{$light-button-primary-bg};
-  --button-primary-text-color: #{$light-button-primary-text};
-  --button-secondary-bg-color: #{$light-button-secondary-bg};
-  --button-secondary-text-color: #{$light-button-secondary-text};
-  --input-border-color: #{$light-input-border};
-  --input-bg-color: #{$light-search-bg};
-  --accent-color: #{$light-button-primary-bg};
-  --accent-color-rgb:
-    #{color.channel($light-button-primary-bg, 'red')},
-    #{color.channel($light-button-primary-bg, 'green')},
-    #{color.channel($light-button-primary-bg, 'blue')};
-  --greeting-avatar-bg-color: #{$light-greeting-avatar-bg};
-  --greeting-avatar-text-color: #{$light-greeting-avatar-text};
-
-  // Font variables
-  --font-primary: #{$font-primary}; // Use SCSS variable
-  --font-icon: #{$font-icon}; // Use SCSS variable
-
-  // Border radius (可以保留或根据设计稿统一调整)
+  --font-primary: #{$font-primary};
+  --font-icon: #{$font-icon};
   --border-radius-small: #{$border-radius-small};
   --border-radius-medium: #{$border-radius-medium};
   --border-radius-large: #{$border-radius-large};
@@ -56,36 +23,7 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg-color: #{$dark-background};
-    --text-primary-color: #{$dark-text-primary};
-    --text-secondary-color: #{$dark-text-secondary};
-    --search-bg-color: #{$dark-search-bg};
-    --search-placeholder-color: #{$dark-search-placeholder};
-    --search-border-color: #{$dark-search-border};
-
-    // ✨ Updated shortcut CSS variables for dark mode
-    --shortcut-icon-bg-color: #{$dark-shortcut-icon-bg};
-    --shortcut-item-bg-color: #{$dark-shortcut-item-bg};
-    --shortcut-item-hover-bg-color: #{$dark-shortcut-item-hover-bg};
-    --shortcut-name-text-color: #{$dark-text-primary}; // 快捷方式名称颜色（深色模式）
-
-    --modal-backdrop-color: #{$dark-modal-backdrop};
-    --modal-bg-color: #{$dark-modal-bg};
-    --context-menu-bg-color: #{$dark-context-menu-bg};
-    --context-menu-hover-bg-color: #{$dark-context-menu-hover-bg};
-    --button-primary-bg-color: #{$dark-button-primary-bg};
-    --button-primary-text-color: #{$dark-button-primary-text};
-    --button-secondary-bg-color: #{$dark-button-secondary-bg};
-    --button-secondary-text-color: #{$dark-button-secondary-text};
-    --input-border-color: #{$dark-input-border};
-    --input-bg-color: #{$dark-search-bg};
-    --accent-color: #{$dark-button-primary-bg};
-    --accent-color-rgb:
-      #{color.channel($dark-button-primary-bg, 'red')},
-      #{color.channel($dark-button-primary-bg, 'green')},
-      #{color.channel($dark-button-primary-bg, 'blue')};
-    --greeting-avatar-bg-color: #{$dark-greeting-avatar-bg};
-    --greeting-avatar-text-color: #{$dark-greeting-avatar-text};
+    @include declare-theme-variables(dark);
   }
 }
 
@@ -117,45 +55,52 @@ body {
 
 .btn {
   @include button-reset;
+  height: 43px;
   padding: 10px 20px;
-  border-radius: $border-radius-medium;
+  border-radius: 18px;
+  corner-shape: superellipse(1.5);
   font-size: 14px;
   font-weight: 500;
   font-family: inherit; // 确保按钮继承字体
   transition:
-    background-color 0.2s ease,
-    box-shadow 0.2s ease,
-    transform 0.1s ease,
+    background-color 0.15s ease,
+    box-shadow 0.15s ease,
+    margin 0.05s ease,
+    transform 0.05s ease,
+    height 0.05s ease,
+    border-bottom-width 0.05s ease,
     filter 0.1s ease; // 添加 transform 和 filter 过渡
   cursor: default; // 更改按钮光标为箭头
 
   &:hover {
-    transform: scale(1.03); // 轻微放大
-    filter: brightness(1.1); // 增加亮度
-  }
-
-  &:active {
-    transform: scale(0.98); // 轻微缩小
-    filter: brightness(0.9); // 降低亮度
   }
 
   &--primary {
     background-color: var(--button-primary-bg-color);
     color: var(--button-primary-text-color);
+    border-bottom: 2px solid var(--button-primary-under);
     &:hover {
-      box-shadow:
-        0 1px 3px rgba(0, 0, 0, 0.1),
-        0 1px 2px rgba(0, 0, 0, 0.06);
-      // 继承通用 hover 效果，或在此处覆盖
+    }
+    &:active {
+      margin-top: 2px;
+      height: 41px;
+      border-bottom-width: 1px;
     }
   }
 
   &--secondary {
+    border: 1px solid var(--button-secondary-under);
+    border-bottom: 2px solid var(--button-secondary-under);
     background-color: var(--button-secondary-bg-color);
     color: var(--button-secondary-text-color);
     &:hover {
       background-color: var(--shortcut-item-hover-bg-color); // Or specific secondary hover
       // 继承通用 hover 效果，或在此处覆盖
+    }
+    &:active {
+      margin-top: 2px;
+      height: 41px;
+      border-bottom-width: 1px;
     }
   }
 

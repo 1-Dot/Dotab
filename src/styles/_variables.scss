@@ -27,64 +27,142 @@ $light-shortcut-item-bg: transparent; // Shortcut item wrapper background (light
 $light-shortcut-item-hover-bg: #e8eaed; // Shortcut item wrapper hover background (light mode) - subtle gray
 
 $light-modal-backdrop: rgba(0, 0, 0, 0.1);
-$light-modal-bg: #ffffff;
-$light-context-menu-bg: #f8f9fad0;
-$light-context-menu-hover-bg: #00000010;
-$light-button-primary-bg: #0067c0;
-$light-button-primary-text: #ffffff;
-$light-button-secondary-bg: #f1f3f4;
-$light-button-secondary-text: #3c4043;
-$light-input-border: #dadce0;
-$light-greeting-avatar-bg: #202124;
-$light-greeting-avatar-text: #ffffff;
+$light-modal-bg: #f3f3f5;
+@use 'sass:color';
+@use 'sass:map';
 
-// 深色模式颜色
-$dark-background: #202124;
-$dark-text-primary: #e8eaed;
-$dark-text-secondary: #9aa0a6;
-$dark-search-bg: #303134;
-$dark-search-placeholder: #9aa0a6;
-$dark-search-border: #5f6368;
+$font-primary:
+  'Manrope',
+  'PingFang SC',
+  -apple-system,
+  BlinkMacSystemFont,
+  'Segoe UI',
+  Roboto,
+  Helvetica,
+  Arial,
+  sans-serif,
+  'Apple Color Emoji',
+  'Segoe UI Emoji',
+  'Segoe UI Symbol';
+$font-icon: 'Segoe Fluent Icons';
 
-// ✨ Updated for new shortcut style
-$dark-shortcut-icon-bg: #303134; // Icon container background (dark mode) - was $dark-shortcut-bg
-$dark-shortcut-item-bg: transparent; // Shortcut item wrapper background (dark mode)
-$dark-shortcut-item-hover-bg: #3c4043; // Shortcut item wrapper hover background (dark mode)
-
-$dark-modal-backdrop: rgba(0, 0, 0, 0.4);
-$dark-modal-bg: #2d2e30;
-$dark-context-menu-bg: #2d2e30d0;
-$dark-context-menu-hover-bg: #ffffff10;
-$dark-button-primary-bg: #4cc2ff;
-$dark-button-primary-text: #202124;
-$dark-button-secondary-bg: #3c4043;
-$dark-button-secondary-text: #e8eaed;
-$dark-input-border: #5f6368;
-$dark-greeting-avatar-bg: #f1f3f4;
-$dark-greeting-avatar-text: #202124;
-
-// 通用
-$border-radius-small: 3px; // 4px * 0.9 = 3.6px -> 3px
-$border-radius-medium: 7px; // 8px * 0.9 = 7.2px -> 7px
-$border-radius-large: 13px; // 14px * 0.9 = 12.6px -> 13px
+$border-radius-small: 3px;
+$border-radius-medium: 7px;
+$border-radius-large: 13px;
 $border-radius-round: 50%;
 
-$search-bar-height: 43px; // 48px * 0.9 = 43.2px -> 43px
-// ✨ New shortcut dimensions (can be adjusted)
-$shortcut-wrapper-width: 96px; // 80px * 0.9 = 72px
-$shortcut-icon-container-size: 62px; // 69px * 0.9 = 62.1px -> 62px
-$shortcut-favicon-size: 29px; // 32px * 0.9 = 28.8px -> 29px
-$shortcut-gap: 2px; // 29px * 0.9 = 26.1px -> 26px
+$search-bar-height: 43px;
+$shortcut-wrapper-width: 96px;
+$shortcut-icon-container-size: 62px;
+$shortcut-favicon-size: 29px;
+$shortcut-gap: 2px;
 
-$modal-max-width: 480px; // Excluded from scaling
+$modal-max-width: 480px;
 
-// 组件特定样式
-// Shadows
 $shortcutItem-shadow: 0px 6px 20px rgba(38.9, 49.2, 73.56, 0.15);
-$modalDialog-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
 $contextMenu-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 
-// Colors
-$shortcutItem-bg-hover: rgba(0, 0, 0, 0.067);
-$searchBox-suggestion-bg-hover: rgba(0, 0, 0, 0.06);
-$searchBox-suggestion-bg-active: rgba(0, 0, 0, 0.12);
+$shortcut-item-hover-light: rgba(0, 0, 0, 0.067);
+$shortcut-item-hover-dark: #3c4043;
+$search-suggestion-hover-light: rgba(0, 0, 0, 0.06);
+$search-suggestion-hover-dark: rgba(255, 255, 255, 0.08);
+$search-suggestion-active-light: rgba(0, 0, 0, 0.12);
+$search-suggestion-active-dark: rgba(255, 255, 255, 0.16);
+$light-button-primary-under: #00377a;
+$light-button-secondary-under: #cecece;
+$dark-button-primary-bg: #4cc2ff;
+$dark-button-secondary-bg: #3c4043;
+$dark-button-primary-under: color.scale($dark-button-primary-bg, $lightness: -35%);
+$dark-button-secondary-under: color.scale($dark-button-secondary-bg, $lightness: 25%);
+
+$_theme-color-tokens: (
+  light: (
+    bg-color: #f9fafb,
+    text-primary-color: #333333,
+    text-secondary-color: #5f5f5f,
+    search-bg-color: #ffffff,
+    search-placeholder-color: #888888,
+    search-border-color: #d2d3d6,
+    search-suggestion-hover-bg-color: $search-suggestion-hover-light,
+    search-suggestion-active-bg-color: $search-suggestion-active-light,
+    shortcut-icon-bg-color: #ffffff,
+    shortcut-item-bg-color: transparent,
+    shortcut-item-hover-bg-color: $shortcut-item-hover-light,
+    shortcut-name-text-color: #000000,
+    modal-backdrop-color: rgba(0, 0, 0, 0.1),
+    modal-action-bg-color: #f3f3f5,
+    modal-bg-color: #fff,
+    context-menu-bg-color: #f8f9fad0,
+    context-menu-hover-bg-color: #00000010,
+    button-primary-bg-color: #0067c0,
+    button-primary-text-color: #ffffff,
+    button-secondary-bg-color: #fefefe,
+    button-secondary-text-color: #3c4043,
+    button-primary-under: $light-button-primary-under,
+    button-secondary-under: $light-button-secondary-under,
+    input-border-color: #cdcdcd,
+    input-bg-color: #fafafb,
+    accent-color: #0067c0,
+    greeting-avatar-bg-color: #202124,
+    greeting-avatar-text-color: #ffffff,
+  ),
+  dark: (
+    bg-color: #202124,
+    text-primary-color: #e8eaed,
+    text-secondary-color: #9aa0a6,
+    search-bg-color: #303134,
+    search-placeholder-color: #9aa0a6,
+    search-border-color: #5f6368,
+    search-suggestion-hover-bg-color: $search-suggestion-hover-dark,
+    search-suggestion-active-bg-color: $search-suggestion-active-dark,
+    shortcut-icon-bg-color: #303134,
+    shortcut-item-bg-color: transparent,
+    shortcut-item-hover-bg-color: $shortcut-item-hover-dark,
+    shortcut-name-text-color: #e8eaed,
+    modal-backdrop-color: rgba(0, 0, 0, 0.4),
+    modal-action-bg-color: #2d2e30,
+    modal-bg-color: #202124,
+    context-menu-bg-color: #2d2e30d0,
+    context-menu-hover-bg-color: #ffffff10,
+    button-primary-bg-color: $dark-button-primary-bg,
+    button-primary-text-color: #202124,
+    button-secondary-bg-color: $dark-button-secondary-bg,
+    button-secondary-text-color: #e8eaed,
+    button-primary-under: $dark-button-primary-under,
+    button-secondary-under: $dark-button-secondary-under,
+    input-border-color: #5f6368,
+    input-bg-color: #303134,
+    accent-color: $dark-button-primary-bg,
+    greeting-avatar-bg-color: #f1f3f4,
+    greeting-avatar-text-color: #202124,
+  ),
+);
+
+@function theme-color($token, $mode: light) {
+  $theme: map.get($_theme-color-tokens, $mode);
+  @if $theme == null {
+    @error 'Unknown theme mode: #{ $mode }.';
+  }
+  @if not map.has-key($theme, $token) {
+    @error 'Unknown theme token: #{ $token } for #{ $mode }.';
+  }
+  @return map.get($theme, $token);
+}
+
+@mixin declare-theme-variables($mode) {
+  $theme: map.get($_theme-color-tokens, $mode);
+  @if $theme == null {
+    @error 'Unknown theme mode: #{ $mode }.';
+  }
+
+  @each $token, $value in $theme {
+    --#{$token}: #{$value};
+  }
+
+  $accent: map.get($theme, accent-color);
+  @if $accent {
+    --accent-color-rgb:
+      #{color.channel($accent, 'red')}, #{color.channel($accent, 'green')},
+      #{color.channel($accent, 'blue')};
+  }
+}

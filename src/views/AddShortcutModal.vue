@@ -1,37 +1,34 @@
 <template>
   <div class="add-shortcut-modal">
-    <h2>{{ isEditing ? 'Edit website' : 'Add a website' }}</h2>
 
     <form @submit.prevent="handleSubmit">
-      <div class="form-group">
-        <label for="shortcut-name">Name</label>
-        <input type="text" id="shortcut-name" class="input-field" v-model="formData.name" required />
-      </div>
+      <div class="modal-body">
+        <h2>{{ isEditing ? '编辑快捷方式' : '添加快捷方式' }}</h2>
 
-      <div class="form-group">
-        <label for="shortcut-url">URL</label>
-        <input type="url" id="shortcut-url" class="input-field" v-model="formData.url" placeholder="https://github.com"
-          required />
-      </div>
-
-      <div class="form-group">
-        <label>Favicon (URL or local file)</label>
-        <div class="favicon-options">
-          <input type="text" class="input-field" v-model="formData.customFavicon"
-            placeholder="(Fetch automatically) or enter image URL" />
-          <span class="or-divider">or</span>
-          <label for="favicon-upload" class="btn btn--secondary upload-button">
-            <span class="font-icon"></span> Upload From PC
-            <input type="file" id="favicon-upload" @change="handleFaviconUpload" accept="image/*"
-              class="visually-hidden-input" />
-          </label>
+        <div class="form-group">
+          <input type="url" id="shortcut-url" class="input-field" v-model="formData.url" placeholder="URL" required />
         </div>
-        <p v-if="faviconFileName" class="favicon-file-name">Selected: {{ faviconFileName }}</p>
+
+        <div class="form-group">
+          <input type="text" id="shortcut-name" class="input-field" v-model="formData.name" placeholder="标签" required />
+        </div>
+
+        <div class="form-group">
+          <div class="favicon-options">
+            <input type="text" class="input-field" v-model="formData.customFavicon" placeholder="图标 (auto)" />
+            <label for="favicon-upload" class="btn btn--secondary upload-button">
+              <span class="font-icon"></span> 从电脑上传
+              <input type="file" id="favicon-upload" @change="handleFaviconUpload" accept="image/*"
+                class="visually-hidden-input" />
+            </label>
+          </div>
+          <p v-if="faviconFileName" class="favicon-file-name">Selected: {{ faviconFileName }}</p>
+        </div>
       </div>
 
       <div class="modal-actions">
-        <button type="button" class="btn btn--secondary" @click="$emit('close')">Cancel</button>
-        <button type="submit" class="btn btn--primary">{{ isEditing ? 'Save' : '+ Add' }}</button>
+        <button type="button" class="btn btn--secondary" @click="$emit('close')">取消</button>
+        <button type="submit" class="btn btn--primary">{{ isEditing ? '保存' : '+ 添加' }}</button>
       </div>
     </form>
   </div>
@@ -119,8 +116,23 @@ const handleSubmit = async () => {
 @use '../styles/variables' as *;
 
 .add-shortcut-modal {
+  padding: 18px;
+
+  .modal-body {
+    margin: -18px;
+    padding: 27px;
+    padding-bottom: 14px;
+    margin-bottom: -14px;
+    border-bottom-left-radius: 40px;
+    border-bottom-right-radius: 40px;
+    corner-shape: superellipse(1.5);
+    background-color: var(--modal-bg-color);
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+
   h2 {
-    font-size: 20px;
+    font-size: 22px;
     font-weight: 600;
     color: var(--text-primary-color);
     margin-top: 0;
@@ -135,7 +147,6 @@ const handleSubmit = async () => {
       font-size: 13px;
       font-weight: 500;
       color: var(--text-secondary-color);
-      margin-bottom: 8px;
     }
   }
 
@@ -146,11 +157,6 @@ const handleSubmit = async () => {
 
     .input-field {
       flex-grow: 1;
-    }
-
-    .or-divider {
-      font-size: 13px;
-      color: var(--text-secondary-color);
     }
 
     .upload-button {
@@ -168,6 +174,8 @@ const handleSubmit = async () => {
 
   .modal-actions {
     display: flex;
+    //水平居中
+
     justify-content: flex-end;
     gap: 12px;
     margin-top: 30px;
