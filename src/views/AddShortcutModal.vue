@@ -7,17 +7,30 @@
 
         <div class="form-group">
           <input type="url" id="shortcut-url" class="input-field" v-model="formData.url" placeholder="URL" required />
+          <span class="input-icon font-icon"></span>
         </div>
 
         <div class="form-group">
-          <input type="text" id="shortcut-name" class="input-field" v-model="formData.name" placeholder="标签" required />
+          <div class="input-button-group">
+            <input type="text" id="shortcut-name" class="input-field" v-model="formData.name" placeholder="标签"
+              style="max-width: 274px;" required />
+            <span class="input-icon font-icon"></span>
+            <label for="favicon-upload" class="btn btn--secondary input-button" style="flex-grow: 1;">
+              <span class="font-icon"></span> 自动
+            </label>
+          </div>
+
         </div>
 
         <div class="form-group">
-          <div class="favicon-options">
+          <div class="input-button-group">
             <input type="text" class="input-field" v-model="formData.customFavicon" placeholder="图标 (auto)" />
-            <label for="favicon-upload" class="btn btn--secondary upload-button">
-              <span class="font-icon"></span> 从电脑上传
+            <span class="input-icon font-icon"></span>
+            <label for="favicon-upload" class="btn btn--secondary input-button circle-button">
+              <span class="font-icon"></span>
+            </label>
+            <label for="favicon-upload" class="btn btn--secondary input-button circle-button">
+              <span class="font-icon"></span>
               <input type="file" id="favicon-upload" @change="handleFaviconUpload" accept="image/*"
                 class="visually-hidden-input" />
             </label>
@@ -28,7 +41,9 @@
 
       <div class="modal-actions">
         <button type="button" class="btn btn--secondary" @click="$emit('close')">取消</button>
-        <button type="submit" class="btn btn--primary">{{ isEditing ? '保存' : '+ 添加' }}</button>
+        <button type="submit" class="btn btn--primary"><span class="font-icon">{{ isEditing ? '' : ''
+            }}</span>{{ isEditing ? '保存' : '添加'
+            }}</button>
       </div>
     </form>
   </div>
@@ -141,28 +156,53 @@ const handleSubmit = async () => {
 
   .form-group {
     margin-bottom: 20px;
+    position: relative;
+    height: 43px;
 
     label {
       display: block;
       font-size: 13px;
       font-weight: 500;
-      color: var(--text-secondary-color);
+    }
+
+    .input-icon {
+      position: absolute;
+      pointer-events: none;
+      top: 50%;
+      left: 16px;
+      transform: translateY(-50%);
+    }
+
+    .input-field {
+      padding-left: 42px;
     }
   }
 
-  .favicon-options {
+  .input-button-group {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 9px;
 
     .input-field {
       flex-grow: 1;
+      margin-right: 3px;
     }
 
-    .upload-button {
+    .input-button {
       white-space: nowrap;
       // For SF Symbol "square.and.arrow.up" (􀈽), ensure $font-sf-symbols is correctly applied
       // or embed the symbol directly if your editor/font supports it well.
+    }
+
+    .circle-button {
+      display: inline-block;
+      min-width: 43px;
+      padding: 0;
+      border-radius: 50%;
+      corner-shape: superellipse(1) !important;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
   }
 
@@ -175,10 +215,13 @@ const handleSubmit = async () => {
   .modal-actions {
     display: flex;
     //水平居中
-
-    justify-content: flex-end;
+    justify-content: center;
     gap: 12px;
     margin-top: 30px;
+
+    .btn {
+      min-width: 192px;
+    }
   }
 }
 </style>

@@ -80,11 +80,13 @@ body {
     color: var(--button-primary-text-color);
     border-bottom: 2px solid var(--button-primary-under);
     &:hover {
+      background-color: var(--button-primary-hover-bg-color);
     }
     &:active {
+      background-color: var(--button-primary-active-bg-color);
       margin-top: 2px;
       height: 41px;
-      border-bottom-width: 1px;
+      border-bottom-width: 0px;
     }
   }
 
@@ -94,10 +96,11 @@ body {
     background-color: var(--button-secondary-bg-color);
     color: var(--button-secondary-text-color);
     &:hover {
-      background-color: var(--shortcut-item-hover-bg-color); // Or specific secondary hover
+      background-color: var(--button-secondary-hover-bg-color);
       // 继承通用 hover 效果，或在此处覆盖
     }
     &:active {
+      background-color: var(--button-secondary-active-bg-color);
       margin-top: 2px;
       height: 41px;
       border-bottom-width: 1px;

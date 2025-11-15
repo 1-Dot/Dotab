@@ -1,10 +1,10 @@
 <template>
   <div v-if="visible" class="context-menu context-menu-content" :style="{ top: `${y}px`, left: `${x}px` }" @click.stop>
     <ul>
-      <li @click="emit('close', shortcut)"><span class="font-icon"></span>&nbsp;&nbsp; 搜索</li>
+      <li @click="emit('close', shortcut)"><span class="font-icon"></span>搜索</li>
       <hr>
-      <li @click="emit('edit', shortcut)"><span class="font-icon"></span>&nbsp;&nbsp; 编辑</li>
-      <li @click="emit('delete', shortcut)"><span class="font-icon"></span>&nbsp;&nbsp; 删除</li>
+      <li @click="emit('edit', shortcut)"><span class="font-icon"></span>编辑</li>
+      <li @click="emit('delete', shortcut)"><span class="font-icon"></span>删除</li>
     </ul>
   </div>
 </template>
@@ -51,6 +51,9 @@ const emit = defineEmits(['close', 'edit', 'delete'])
   }
 
   li {
+    display: flex;
+    align-items: center;
+    gap: 11px;
     border-radius: 15px;
     corner-shape: superellipse(1.5);
     margin: 2px 4px;
@@ -59,6 +62,10 @@ const emit = defineEmits(['close', 'edit', 'delete'])
     font-weight: 600;
     color: var(--text-primary-color);
     transition: all 0.08s ease;
+
+    .font-icon {
+      margin-top: 0px;
+    }
 
     &:hover {
       background-color: var(--context-menu-hover-bg-color);

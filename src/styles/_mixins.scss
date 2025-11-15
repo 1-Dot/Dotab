@@ -8,6 +8,10 @@
 }
 
 @mixin button-reset {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
   border: none;
   background: none;
   padding: 0;
@@ -22,20 +26,35 @@
 
 @mixin input-style {
   height: 42px;
-  border: 1px solid var(--input-border-color);
+  outline: 1px solid var(--input-border-color);
+  outline-offset: -1px;
+  border: 0;
   background-color: var(--input-bg-color);
   color: var(--text-primary-color);
   // ✨ 现在 $border-radius-medium 就可以被正确找到了！
   border-radius: 18px;
   corner-shape: superellipse(1.5);
-  padding: 10px 12px;
+  padding: 10px 13px;
   font-size: 14px;
   width: 100%;
   box-sizing: border-box;
+  position: relative;
+  transition: outline-color 0.1s ease;
 
   &:focus {
-    border-color: var(--accent-color);
-    border-width: 2px;
-    outline: none;
+    background-color: var(--background-color);
+    outline: 2px solid var(--accent-color);
+    outline-offset: -2px;
+  }
+
+  &::before {
+    // 邊框
+    content: '';
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+    background-color: red;
+    border: 2px solid var(--accent-color);
+    z-index: 999;
   }
 }
