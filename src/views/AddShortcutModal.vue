@@ -42,7 +42,7 @@
       <div class="modal-actions">
         <button type="button" class="btn btn--secondary" @click="$emit('close')">取消</button>
         <button type="submit" class="btn btn--primary"><span class="font-icon">{{ isEditing ? '' : ''
-            }}</span>{{ isEditing ? '保存' : '添加'
+        }}</span>{{ isEditing ? '保存' : '添加'
             }}</button>
       </div>
     </form>
@@ -140,6 +140,7 @@ const handleSubmit = async () => {
     margin-bottom: -14px;
     border-bottom-left-radius: 40px;
     border-bottom-right-radius: 40px;
+    outline: 1px solid #e5e5e5;
     corner-shape: superellipse(1.5);
     background-color: var(--modal-bg-color);
     max-height: 70vh;
