@@ -1,12 +1,14 @@
 <template>
   <div class="user-greeting">
-    <img src="/images/avatar2.png" alt="User Avatar" class="avatar-img" />
-    <h1>Hello, 1Dot</h1>
+    <img :src="settingsStore.avatarUrl" alt="User Avatar" class="avatar-img" />
+    <h1>{{ settingsStore.greetingMessage }}</h1>
   </div>
 </template>
 
 <script setup lang="ts">
-// No script changes needed
+import { useSettingsStore } from '../stores/settings'
+
+const settingsStore = useSettingsStore()
 </script>
 
 <style lang="scss" scoped>

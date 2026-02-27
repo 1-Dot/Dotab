@@ -15,9 +15,9 @@
             <input type="text" id="shortcut-name" class="input-field" v-model="formData.name" placeholder="标签"
               style="max-width: 274px;" required />
             <span class="input-icon font-icon"></span>
-            <label for="favicon-upload" class="btn btn--secondary input-button" style="flex-grow: 1;">
+            <button type="button" class="btn btn--secondary input-button" style="flex-grow: 1;" @click="autoFillLabel">
               <span class="font-icon"></span> 自动
-            </label>
+            </button>
           </div>
 
         </div>
@@ -26,9 +26,9 @@
           <div class="input-button-group">
             <input type="text" class="input-field" v-model="formData.customFavicon" placeholder="图标 (auto)" />
             <span class="input-icon font-icon"></span>
-            <label for="favicon-upload" class="btn btn--secondary input-button circle-button">
+            <button type="button" class="btn btn--secondary input-button circle-button" @click="pasteIconFromClipboard">
               <span class="font-icon"></span>
-            </label>
+            </button>
             <label for="favicon-upload" class="btn btn--secondary input-button circle-button">
               <span class="font-icon"></span>
               <input type="file" id="favicon-upload" @change="handleFaviconUpload" accept="image/*"
@@ -99,6 +99,61 @@ const handleFaviconUpload = (event: Event) => {
   }
 }
 
+import { NAME_CORRECTIONS } from '../data/nameCorrections'
+
+const autoFillLabel = () => {
+  if (!formData.url) return
+  try {
+    const urlStr = formData.url.startsWith('http') ? formData.url : 'https://' + formData.url
+    const url = new URL(urlStr)
+    // 提取域名并清理: www.google.com -> Google
+    const hostname = url.hostname.replace(/^www\./, '')
+    const parts = hostname.split('.')
+    const key = parts[0].toLowerCase()
+    // 优先使用更正表，否则首字母大写
+    formData.name = NAME_CORRECTIONS[key] ?? (key.charAt(0).toUpperCase() + key.slice(1))
+  } catch {
+    // URL 无效，不做处理
+  }
+}
+
+const pasteIconFromClipboard = async () => {
+  try {
+    const items = await navigator.clipboard.read()
+    for (const item of items) {
+      // 优先查找图片类型
+      const imageType = item.types.find((type) => type.startsWith('image/'))
+      if (imageType) {
+        const blob = await item.getType(imageType)
+        const reader = new FileReader()
+        reader.onload = (e) => {
+          formData.customFavicon = e.target?.result as string
+          faviconFileName.value = '(clipboard image)'
+        }
+        reader.readAsDataURL(blob)
+        return
+      }
+    }
+    // 没有图片，尝试读取文本作为 URL
+    const text = await navigator.clipboard.readText()
+    if (text && (text.startsWith('http://') || text.startsWith('https://') || text.startsWith('data:'))) {
+      formData.customFavicon = text.trim()
+      faviconFileName.value = '(clipboard url)'
+    }
+  } catch {
+    // 剪贴板 API 可能被拒绝，尝试 readText 降级
+    try {
+      const text = await navigator.clipboard.readText()
+      if (text && (text.startsWith('http://') || text.startsWith('https://') || text.startsWith('data:'))) {
+        formData.customFavicon = text.trim()
+        faviconFileName.value = '(clipboard url)'
+      }
+    } catch {
+      // 剪贴板访问被拒绝
+    }
+  }
+}
+
 const handleSubmit = async () => {
   let finalFaviconUrl = formData.customFavicon
 
@@ -140,7 +195,7 @@ const handleSubmit = async () => {
     margin-bottom: -14px;
     border-bottom-left-radius: 40px;
     border-bottom-right-radius: 40px;
-    outline: 1px solid #e5e5e5;
+    outline: 1px solid var(--modal-body-border-color);
     corner-shape: superellipse(1.5);
     background-color: var(--modal-bg-color);
     max-height: 70vh;

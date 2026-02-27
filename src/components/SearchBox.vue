@@ -1,9 +1,17 @@
 <template>
-  <div class="search-box-wrapper">
-    <input type="text" class="search-input" :placeholder="'What are you looking for today?'" v-model="searchQuery"
-      @keyup.enter="performSearch" />
+  <div class="search-box-wrapper" @dragover.prevent="handleDragOver" @dragleave="handleDragLeave" @drop="handleDrop"
+    :class="{ 'drag-over': isDragOver }">
+    <Transition name="chip-pop">
+      <div v-if="uiStore.siteSearchContext" ref="chipRef" class="site-search-chip" @click="uiStore.clearSiteSearch()">
+        <span class="chip-label">{{ uiStore.siteSearchContext.name }}</span>
+        <span class="chip-close font-icon">&#xE711;</span>
+      </div>
+    </Transition>
+    <input ref="searchInputRef" type="text" class="search-input" :style="{ paddingLeft: chipPadding + 'px' }"
+      :placeholder="uiStore.siteSearchContext ? '搜索...' : 'What are you looking for today?'" v-model="searchQuery"
+      @keyup.enter="performSearch" @keyup.escape="handleEscape" @keydown.backspace="handleBackspace" />
     <div class="search-icons">
-      <button class="btn btn--icon lens-action-icon" title="Search with Google Lens">
+      <button class="btn btn--icon lens-action-icon" title="Search with Google Lens" @click="uiStore.openLensModal()">
         <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 26 26" fill="none">
           <path
             d="M21.3083 24.3027C22.8456 24.3027 24.0917 23.0565 24.0917 21.5193C24.0917 19.982 22.8456 18.7358 21.3083 18.7358C19.7711 18.7358 18.5249 19.982 18.5249 21.5193C18.5249 23.0565 19.7711 24.3027 21.3083 24.3027Z"
@@ -30,12 +38,80 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch, nextTick } from 'vue'
+import { useUiStore } from '../stores/ui'
+import { useShortcutsStore } from '../stores/shortcuts'
+import { findSiteSearchPattern } from '../data/siteSearch'
 
+const GOOGLE_SEARCH_URL = 'https://www.google.com/search?q='
+
+const uiStore = useUiStore()
+const shortcutsStore = useShortcutsStore()
 const searchQuery = ref('')
+const isDragOver = ref(false)
+const searchInputRef = ref<HTMLInputElement | null>(null)
+const chipRef = ref<HTMLElement | null>(null)
+const chipPadding = ref(22)
+
+// 当站内搜索模式激活时，自动聚焦输入框并计算 chip 宽度
+watch(() => uiStore.siteSearchContext, async (ctx) => {
+  if (ctx) {
+    searchQuery.value = ''
+    await nextTick()
+    chipPadding.value = chipRef.value ? chipRef.value.offsetWidth + 20 : 22
+    setTimeout(() => searchInputRef.value?.focus(), 0)
+  } else {
+    chipPadding.value = 22
+  }
+})
+
+// --- 拖放搜索 ---
+const handleDragOver = (event: DragEvent) => {
+  event.preventDefault()
+  isDragOver.value = true
+}
+
+const handleDragLeave = () => {
+  isDragOver.value = false
+}
+
+const handleDrop = (event: DragEvent) => {
+  event.preventDefault()
+  isDragOver.value = false
+  const shortcutId = event.dataTransfer?.getData('text/plain')
+  if (!shortcutId) return
+  const shortcut = shortcutsStore.shortcuts.find(s => s.id === shortcutId)
+  if (!shortcut) return
+  const matched = findSiteSearchPattern(shortcut.url)
+  if (matched) {
+    uiStore.activateSiteSearch({ name: matched.name, urlTemplate: matched.urlTemplate })
+  }
+}
+
+const handleEscape = () => {
+  if (uiStore.siteSearchContext) {
+    uiStore.clearSiteSearch()
+  }
+}
+
+const handleBackspace = () => {
+  if (searchQuery.value === '' && uiStore.siteSearchContext) {
+    uiStore.clearSiteSearch()
+  }
+}
 
 const performSearch = () => {
   if (searchQuery.value.trim() === '') return
+
+  // 站内搜索模式
+  if (uiStore.siteSearchContext) {
+    const url = uiStore.siteSearchContext.urlTemplate.replace('{query}', encodeURIComponent(searchQuery.value.trim()))
+    searchQuery.value = ''
+    uiStore.clearSiteSearch()
+    window.location.href = url
+    return
+  }
+
   let url: string
   try {
     // Attempt to construct a URL, prepending http if not present for URL constructor
@@ -62,9 +138,10 @@ const performSearch = () => {
       throw new Error('Not a full URL, treating as search query')
     }
   } catch {
-    // If URL construction fails or it's not a valid-looking URL, treat as search query
-    url = `https://www.google.com/search?q=${encodeURIComponent(searchQuery.value.trim())}`
+    // 默认使用 Google 搜索
+    url = GOOGLE_SEARCH_URL + encodeURIComponent(searchQuery.value.trim())
   }
+  searchQuery.value = ''
   window.location.href = url
 }
 </script>
@@ -85,6 +162,15 @@ const performSearch = () => {
   padding: 0;
   position: relative;
   border: 0.5px solid var(--search-border-color); // 设计稿边框
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+
+  &.drag-over {
+    border-color: var(--accent-color);
+    box-shadow:
+      0px 1px 4px 0px rgba(0, 0, 0, 0.12),
+      0px 4px 16px 0px rgba(39, 49, 74, 0.1),
+      0 0 0 2px var(--accent-color);
+  }
 }
 
 .search-input {
@@ -102,7 +188,7 @@ const performSearch = () => {
   font-weight: 500; // 设计稿字重
   color: var(--text-primary-color);
   border: 2px solid transparent;
-  transition: border 0.08s ease-out;
+  transition: border 0.08s ease-out, padding-left 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 
   &::placeholder {
     color: var(--search-placeholder-color);
@@ -130,6 +216,7 @@ const performSearch = () => {
 }
 
 .lens-action-icon {
+  corner-shape: round;
   color: var(--text-primary-color); // 使用 CSS 变量
   background: none;
   border: none;
@@ -139,8 +226,8 @@ const performSearch = () => {
   display: flex; // To center the SVG if needed
   align-items: center;
   justify-content: center;
-  border-radius: 50%; // 添加圆角
-  transition: background-color 0.15s ease-out; // 添加过渡效果
+  border-radius: 50%;
+  transition: background-color 0.15s ease-out;
 
   svg {
     width: 22px; // Match search-action-icon font-size visually
@@ -161,6 +248,7 @@ const performSearch = () => {
 }
 
 .search-action-icon {
+  corner-shape: round;
   color: var(--text-primary-color); // 使用 CSS 变量
   font-size: 23px; // 设计稿字体大小
   font-weight: 590; // 设计稿字重
@@ -169,8 +257,8 @@ const performSearch = () => {
   width: 46px; // 增大点击区域
   height: 46px;
   cursor: pointer;
-  border-radius: 50%; // 添加圆角
-  transition: background-color 0.15s ease-out; // 添加过渡效果
+  border-radius: 50%;
+  transition: background-color 0.15s ease-out;
 
   &:hover {
     background-color: var(--search-suggestion-hover-bg-color); // 微妙的 hover 背景
@@ -179,5 +267,57 @@ const performSearch = () => {
   &:active {
     background-color: var(--search-suggestion-active-bg-color); // 微妙的 active 背景
   }
+}
+
+.site-search-chip {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 8px 5px 12px;
+  background-color: var(--accent-color);
+  color: var(--button-primary-text-color);
+  border-radius: 14px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+
+  &:hover {
+    opacity: 0.85;
+  }
+
+  &:active {
+    transform: translateY(-50%) scale(0.95);
+  }
+
+  .chip-close {
+    font-size: 10px;
+    line-height: 1;
+  }
+}
+
+// Chip 弹出 / 消失动画
+.chip-pop-enter-active {
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.chip-pop-leave-active {
+  transition: all 0.15s cubic-bezier(0.4, 0, 1, 1);
+}
+
+.chip-pop-enter-from {
+  opacity: 0;
+  transform: translateY(-50%) scale(0.6) translateX(-8px);
+}
+
+.chip-pop-leave-to {
+  opacity: 0;
+  transform: translateY(-50%) scale(0.6) translateX(-8px);
 }
 </style>

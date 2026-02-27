@@ -1,8 +1,8 @@
 <template>
   <div v-if="visible" class="context-menu context-menu-content" :style="{ top: `${y}px`, left: `${x}px` }" @click.stop>
     <ul>
-      <li @click="emit('close', shortcut)"><span class="font-icon"></span>搜索</li>
-      <hr>
+      <li v-if="isSearchable" @click="emit('search', shortcut)"><span class="font-icon"></span>搜索</li>
+      <hr v-if="isSearchable">
       <li @click="emit('edit', shortcut)"><span class="font-icon"></span>编辑</li>
       <li @click="emit('delete', shortcut)"><span class="font-icon"></span>删除</li>
     </ul>
@@ -10,16 +10,23 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import type { Shortcut } from '../stores/shortcuts'
+import { findSiteSearchPattern } from '../data/siteSearch'
 
-defineProps<{
+const props = defineProps<{
   visible: boolean
   x: number
   y: number
   shortcut: Shortcut | null
 }>()
 
-const emit = defineEmits(['close', 'edit', 'delete'])
+const emit = defineEmits(['close', 'edit', 'delete', 'search'])
+
+const isSearchable = computed(() => {
+  if (!props.shortcut) return false
+  return !!findSiteSearchPattern(props.shortcut.url)
+})
 </script>
 
 <style lang="scss" scoped>
